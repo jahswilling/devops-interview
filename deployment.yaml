@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wafi-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wafi-app
+  template:
+    metadata:
+      labels:
+        app: wafi-app
+    spec:
+      containers:
+      - name: wafi-app
+        image: root0877/taskmanager:latest
+        ports:
+        - containerPort: 8000
