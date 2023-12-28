@@ -40,9 +40,9 @@ jobs:
 
     - name: Log in to ArgoCD
       run: |
-        kubectl port-forward svc/argocd-server -n argocd 8080:443 &
+        kubectl port-forward svc/argocd-server -n argocd 8080: &
         sleep 5  # Wait for port-forward to be ready
         argocd login --grpc-web --insecure --username admin --password ${{ secrets.ARGOCD_PASSWORD }} --plaintext localhost:8080
 
     - name: Sync ArgoCD Application
-      run: argocd app sync your-django-app
+      run: argocd app sync wafi-app
