@@ -27,7 +27,7 @@ jobs:
         docker push root0877/wafi_app:latest
 
     - name: Set up Google Cloud CLI
-      uses: google-github-actions/setup-gcloud@v0
+      uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
@@ -39,7 +39,10 @@ jobs:
         chmod +x /usr/local/bin/argocd
 
     - name: Log in to ArgoCD
-      run: argocd login --grpc-web --insecure --username admin --password ${{ secrets.ARGOCD_PASSWORD }} --plaintext localhost:8080
+      run: |
+        kubectl port-forward svc/argocd-server -n argocd 8080:443 &
+        sleep 5  # Wait for port-forward to be ready
+        argocd login --grpc-web --insecure --username admin --password ${{ secrets.ARGOCD_PASSWORD }} --plaintext localhost:8080
 
     - name: Sync ArgoCD Application
       run: argocd app sync your-django-app
