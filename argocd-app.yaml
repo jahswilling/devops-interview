@@ -9,8 +9,8 @@ spec:
     namespace: default
   project: default
   source:
-    repoURL: https://github.com/your-username/your-repo.git
-    path: /path/to/your/application
+    repoURL: https://github.com/jahswilling/devops-interview.git
+    path: /
     targetRevision: HEAD
   syncPolicy:
     automated:
