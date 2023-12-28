@@ -26,23 +26,3 @@ jobs:
         docker build -t root0877/wafi_app:latest .
         docker push root0877/wafi_app:latest
 
-    - name: Set up Google Cloud CLI
-      uses: google-github-actions/setup-gcloud@v2
-      with:
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        export_default_credentials: true
-
-    - name: Install ArgoCD CLI
-      run: |
-        curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-        chmod +x /usr/local/bin/argocd
-
-    - name: Log in to ArgoCD
-      run: |
-        kubectl port-forward svc/argocd-server -n argocd 8080: &
-        sleep 5  # Wait for port-forward to be ready
-        argocd login --grpc-web --insecure --username admin --password ${{ secrets.ARGOCD_PASSWORD }} --plaintext localhost:8080
-
-    - name: Sync ArgoCD Application
-      run: argocd app sync wafi-app
