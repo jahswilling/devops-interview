@@ -1,0 +1,45 @@
+name: Deploy to wafi Kubernetes cluster 
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Configure Docker
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Login to Docker Hub
+      run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t root0877/wafi_app:latest .
+        docker push root0877/wafi_app:latest
+
+    - name: Set up Google Cloud CLI
+      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: Install ArgoCD CLI
+      run: |
+        curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+        chmod +x /usr/local/bin/argocd
+
+    - name: Log in to ArgoCD
+      run: argocd login --grpc-web --insecure --username admin --password ${{ secrets.ARGOCD_PASSWORD }} --plaintext localhost:8080
+
+    - name: Sync ArgoCD Application
+      run: argocd app sync your-django-app
