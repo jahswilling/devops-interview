@@ -27,7 +27,7 @@ jobs:
         docker push root0877/wafi_app:latest
 
     - name: Set up Google Cloud CLI
-      uses: GoogleCloudPlatform/github-actions/setup-gcloud@latest
+      uses: google-github-actions/setup-gcloud@v0
       with:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
